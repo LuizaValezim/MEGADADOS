@@ -10,7 +10,7 @@ Luiza Valezim
 `pip install "uvicorn[standard]"`
 
 ## Rodar:
-`uvicorn product:app --reload`
+`uvicorn projeto:app --reload`
 
 ## Acessar via browser:
 http://127.0.0.1:8000/docs#/
