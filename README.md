@@ -1,6 +1,7 @@
 # Projeto SQL | MegaDados
 ## Integrantes:
 Ellen Shen
+
 Luiza Valezim
 
 ## Instalação:
