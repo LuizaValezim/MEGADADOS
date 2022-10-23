@@ -5,7 +5,7 @@ Ellen Shen
 Luiza Valezim
 
 ## Instalação:
-`pip install "fastapi[all]`
+`pip install "fastapi[all]"`
 
 `pip install "uvicorn[standard]"`
 
