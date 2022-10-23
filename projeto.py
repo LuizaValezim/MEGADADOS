@@ -46,3 +46,32 @@ async def le_produto(id_produto: int):
     """
     produto = inventario[id_produto]
     return produto
+
+# Atualiza Detalhes e Quantidade de Produtos
+@app.put("/produtos/{id_produto}", tags=["produto"])
+async def subscreve_produto(
+    id_produto : int, 
+    produto: Produto = Body(
+    example={
+        "nome": "chiclete",
+        "preco": 4.50,
+        "quantidade": 20
+        })):
+    """
+    Edite as informações abaixo:
+    - nome: nome de cada produto
+    - preco: preço unitário do produto (em reais)
+    - quantidade: quantidade do produto no inventário
+    """
+    inventario[id_produto] = produto
+    return {'id_produto': id_produto, 'produto': produto}
+
+# Remove Produto do Inventario
+@app.delete("/produtos/{id_produto}", tags=["produto"])
+async def apaga_produto(id_produto : int):
+    """
+    Remove Produto do Inventário
+    """
+    produto = inventario[id_produto]
+    inventario.pop(id_produto)
+    return {'Removido': produto}
