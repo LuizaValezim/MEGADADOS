@@ -9,6 +9,8 @@ Luiza Valezim
 
 `pip install "uvicorn[standard]"`
 
+`pip install sqlalchemy_utils`
+
 ## Rodar:
 `uvicorn projeto:app --reload`
 
