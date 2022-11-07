@@ -1,30 +1,14 @@
-from email.policy import default
-from re import M
-from typing import Union
-from fastapi import FastAPI, Body, HTTPException, Path, Form, Response, Request, Depends
-from pydantic import BaseModel,Field
-from fastapi.responses import HTMLResponse
+from fastapi import FastAPI, Body, Path,  Response, Request, Depends
 from fastapi.exceptions import RequestValidationError
-from fastapi.exception_handlers import (
-    http_exception_handler,
-    request_validation_exception_handler,
-)
-from fastapi.responses import PlainTextResponse
+from fastapi.exception_handlers import (http_exception_handler,request_validation_exception_handler,)
 from starlette.exceptions import HTTPException as StarletteHTTPException
-from fastapi.encoders import jsonable_encoder
-
-
 from sqlalchemy.orm import Session
-from MEGADADOS.models import Movimentacao
-import crud, models, schemas
+import crud
+import models
+import schemas
 from database import SessionLocal, engine
 
-from dotenv import load_dotenv
-
-load_dotenv('.env')
-
-models.Base.metadata.create_all(bind=engine)
-
+models.Base.metadata.create_all(bind=engine
 app = FastAPI()
 
 @app.middleware("http")
@@ -90,11 +74,11 @@ async def cria_produto(Session = Depends(get_db) , produto: schemas.Cria_Produto
 
 
 @app.delete("/produtos/{id_produto}", status_code=200, response_model=schemas.Inventario, tags=["produto"])
-async def deleta_produto(Session = Depends(get_db), id_produto: int = Path(ge=0)):
+async def apaga_produto(Session = Depends(get_db), id_produto: int = Path(ge=0)):
     """
     Apaga um produto do Inventário
     """
-    return crud.deleta_produto(db = Session, id_produto = id_produto)
+    return crud.apaga_produto(db = Session, id_produto = id_produto)
  
 
 @app.put("/produtos/{id_produto}", tags=["produto"])
@@ -148,7 +132,7 @@ async def cria_movimentacao(db : Session = Depends(get_db) , movimentacao: schem
 
  
 @app.delete("/movimentacao/{id_movimentacao}", status_code=200, response_model= schemas.Movimentacao, tags=["movimentacao"])
-async def delete_movimentacao(Session = Depends(get_db), id_movimentacao: int = Path(ge=0)):
+async def apaga_movimentacao(Session = Depends(get_db), id_movimentacao: int = Path(ge=0)):
     """
     Apaga uma movimentacao
     """
