@@ -11,15 +11,8 @@ Luiza Valezim
 
 `pip install sqlalchemy_utils`
 
-## Rodar:
-`uvicorn projeto:app --reload`
+## Rodar dentro da pasta Fase 2:
+`uvicorn main:app --reload`
 
 ## Acessar via browser:
 http://127.0.0.1:8000/docs#/
-
-## Inventário:
-
-### Produto:
-| nome | preco | quantidade |
-| :---: | :---: |  :---: | 
-| String | Float | Interger |
