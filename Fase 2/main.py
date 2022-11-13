@@ -3,10 +3,11 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.exception_handlers import (http_exception_handler,request_validation_exception_handler,)
 from starlette.exceptions import HTTPException as StarletteHTTPException
 from sqlalchemy.orm import Session
+from dotenv import load_dotenv
+from database import SessionLocal, engine
 import crud
 import models
 import schemas
-from database import SessionLocal, engine
 
 load_dotenv('.env')
 
