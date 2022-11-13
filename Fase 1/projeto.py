@@ -7,13 +7,6 @@ from fastapi.responses import HTMLResponse
 
 app = FastAPI()
 
-def acha_produto(inventario, id_achar, produto):
-    list_prod = inventario[id_achar]
-    for produto in list_prod:
-        if produto.id_prod == id_achar:
-            return produto, id_achar
-    return None, None
-
 inventario = [{'id_prod':0, 'nome' : "mentos", 'preco': 3.00, 'quantidade' : 20 },
          {'id_prod':1, 'nome' : "acai", 'preco': 15.00, 'quantidade' : 7 },
          {'id_prod':2, 'nome' : "coca", 'preco': 6.90, 'quantidade' : 15},
@@ -56,8 +49,9 @@ async def le_produto(id_produto: int):
     "quantidade":15
     }
     """
-    produto, id_prod = acha_produto(inventario, id_produto, produto)
-    return produto
+    for produto in inventario:
+        if produto["id_prod"] == id_produto:
+            return produto
 
 # Atualiza Detalhes e Quantidade de Produtos
 @app.put("/produtos/{id_produto}", tags=["produto"])
@@ -81,10 +75,17 @@ async def subscreve_produto(
 
 # Remove Produto do Inventario
 @app.delete("/produtos/{id_produto}", tags=["produto"])
-async def apaga_produto(id_produto : int, produto : Produto = Body):
+async def apaga_produto(id_produto : int, produto: Produto = Body(
+    example={
+        "id_prod": 3,
+        "nome": "chiclete",
+        "preco": 4.50,
+        "quantidade": 20
+        })):
     """
     Remove Produto do Inventário
     """
-    produto_apagar, id_apagar = acha_produto(inventario, id_produto, produto)
-    inventario.pop(id_apagar)
+    for produto in inventario:
+        if produto["id_prod"] == id_produto:
+            inventario.pop(id_produto)
     return {'Removido': produto}
