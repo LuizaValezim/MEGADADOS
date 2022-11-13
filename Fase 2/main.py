@@ -8,6 +8,8 @@ import models
 import schemas
 from database import SessionLocal, engine
 
+load_dotenv('.env')
+
 models.Base.metadata.create_all(bind=engine)
 app = FastAPI()
 
