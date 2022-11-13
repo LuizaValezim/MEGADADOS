@@ -8,10 +8,10 @@ import os
 load_dotenv('.env')
 
 # Credenciais do Banco de Dados
-SQL_USER = os.getenv("MEGADADOS_USER")
-SQL_PASSWORD = os.getenv("MEGADADOS_PASSWORD")
-SQL_SERVER = os.getenv("MEGADADOS_SERVER")
-SQL_DB = os.getenv("MEGADADOS_DB")
+SQL_USER = os.getenv("USER")
+SQL_PASSWORD = os.getenv("PASSWORD")
+SQL_SERVER = os.getenv("SERVER")
+SQL_DB = os.getenv("DB")
 
 # URL do nosso Database
 SQLALCHEMY_DATABASE_URL = f"mysql://{SQL_USER}:{SQL_PASSWORD}@{SQL_SERVER}/{SQL_DB}"
