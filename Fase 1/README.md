@@ -18,6 +18,6 @@ http://127.0.0.1:8000/docs#/
 ## Inventário:
 
 ### Produto:
-| nome | preco | quantidade |
-| :---: | :---: |  :---: | 
-| String | Float | Interger |
+|  id_prod |  nome  | preco | quantidade |
+|  :---:   | :---:  | :---: |    :---:   | 
+| Interger | String | Float |  Interger  |
