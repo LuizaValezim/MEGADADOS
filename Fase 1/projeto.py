@@ -7,12 +7,20 @@ from fastapi.responses import HTMLResponse
 
 app = FastAPI()
 
-inventario = [{'nome' : "mentos", 'preco': 3.00, 'quantidade' : 20 },
-         {'nome' : "acai", 'preco': 15.00, 'quantidade' : 7 },
-         {'nome' : "coca", 'preco': 6.90, 'quantidade' : 15},
-         {'nome' : "alho", 'preco': 3.50, 'quantidade' : 7}
+def acha_produto(inventario, id_achar, produto):
+    list_prod = inventario[id_achar]
+    for produto in list_prod:
+        if produto.id_prod == id_achar:
+            return produto, id_achar
+    return None, None
+
+inventario = [{'id_prod':0, 'nome' : "mentos", 'preco': 3.00, 'quantidade' : 20 },
+         {'id_prod':1, 'nome' : "acai", 'preco': 15.00, 'quantidade' : 7 },
+         {'id_prod':2, 'nome' : "coca", 'preco': 6.90, 'quantidade' : 15},
+         {'id_prod':3, 'nome' : "alho", 'preco': 3.50, 'quantidade' : 7}
 ]
 class Produto(BaseModel):
+    id_prod: int
     nome: str
     preco: float
     quantidade : int
@@ -21,6 +29,7 @@ class Produto(BaseModel):
 @app.post("/produtos/", status_code=201, response_model=Produto, tags=["produto"])
 async def cria_produto(produto: Produto = Body(
         example={
+            "id_prod": 1,
             "nome": "chocolate",
             "preco": 7.50,
             "quantidade": 30
@@ -40,11 +49,14 @@ async def cria_produto(produto: Produto = Body(
 async def le_produto(id_produto: int):
     """
     Procura o produto retorna seus dados:
-    {"nome":"mentos", 
-    "preco":3.00,
-    "quantidade":15}
+    {
+    "id_prod": 1,    
+    "nome":"mentos", 
+    "preco": 3.00,
+    "quantidade":15
+    }
     """
-    produto = inventario[id_produto]
+    produto, id_prod = acha_produto(inventario, id_produto, produto)
     return produto
 
 # Atualiza Detalhes e Quantidade de Produtos
@@ -53,6 +65,7 @@ async def subscreve_produto(
     id_produto : int, 
     produto: Produto = Body(
     example={
+        "id_prod": 3,
         "nome": "chiclete",
         "preco": 4.50,
         "quantidade": 20
@@ -68,10 +81,10 @@ async def subscreve_produto(
 
 # Remove Produto do Inventario
 @app.delete("/produtos/{id_produto}", tags=["produto"])
-async def apaga_produto(id_produto : int):
+async def apaga_produto(id_produto : int, produto : Produto = Body):
     """
     Remove Produto do Inventário
     """
-    produto = inventario[id_produto]
-    inventario.pop(id_produto)
+    produto_apagar, id_apagar = acha_produto(inventario, id_produto, produto)
+    inventario.pop(id_apagar)
     return {'Removido': produto}
