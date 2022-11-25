@@ -3,7 +3,7 @@ import models
 import schemas
 
 def cria_produto(db: Session, produto: schemas.Cria_Inventario):
-    db_produto = models.Estoque(**produto.dict())
+    db_produto = models.Inventario(**produto.dict())
     try:
         db.add(db_produto)
         db.commit()

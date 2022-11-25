@@ -61,7 +61,7 @@ async def le_produtos(Session = Depends(get_db)):
 
 
 @app.post("/produtos/", status_code=201, response_model=schemas.Inventario, tags=["produto"])
-async def cria_produto(Session = Depends(get_db) , produto: schemas.Cria_Produto = Body(
+async def cria_produto(Session = Depends(get_db) , produto: schemas.Produto = Body(
         examples = {
             "chocolate": {
                 "id_produto": 1,
@@ -85,7 +85,7 @@ async def apaga_produto(Session = Depends(get_db), id_produto: int = Path(ge=0))
  
 
 @app.put("/produtos/{id_produto}", tags=["produto"])
-async def subscreve_produto(Session = Depends(get_db), id_produto: int = Path(ge=0), produto: schemas.Cria_Produto = Body(
+async def subscreve_produto(Session = Depends(get_db), id_produto: int = Path(ge=0), produto: schemas.Produto = Body(
         examples = {
             "Chocolate": {
                 "id_produto": 3,
