@@ -5,7 +5,7 @@ from sqlalchemy_utils import database_exists, create_database
 from dotenv import load_dotenv
 import os
 
-load_dotenv('.env')
+load_dotenv('cred.env')
 
 # Credenciais do Banco de Dados
 SQL_USER = os.getenv("USER")
@@ -14,7 +14,7 @@ SQL_SERVER = os.getenv("SERVER")
 SQL_DB = os.getenv("DB")
 
 # URL do nosso Database
-SQLALCHEMY_DATABASE_URL = f"mysql://{SQL_USER}:{SQL_PASSWORD}@{SQL_SERVER}/{SQL_DB}"
+SQLALCHEMY_DATABASE_URL = f"mysql+mysqlconnector://{SQL_USER}:{SQL_PASSWORD}@{SQL_SERVER}/{SQL_DB}"
 
 # Checando se o database ja existe
 if not database_exists(SQLALCHEMY_DATABASE_URL):

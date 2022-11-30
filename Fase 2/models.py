@@ -14,6 +14,7 @@ class Inventario(Base):
     
 class Movimentacao(Base):
     __tablename__ = "movimentacao"
+    
     id_movimentacao = Column(Integer, primary_key=True, index=True, autoincrement=True)
     id_produto = Column(Integer, ForeignKey("inventario.id_produto"))
     quantidade = Column(Integer)

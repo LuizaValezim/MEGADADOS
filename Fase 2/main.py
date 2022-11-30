@@ -9,8 +9,6 @@ import crud
 import models
 import schemas
 
-load_dotenv('.env')
-
 models.Base.metadata.create_all(bind=engine)
 app = FastAPI()
 
@@ -39,7 +37,7 @@ async def custom_http_exception_handler(request, exc):
 async def validation_exception_handler(request, exc):
     return await request_validation_exception_handler(request, exc)
 
-# Inventario
+# ------------------------------------------------------------------------------------ Inventario
 
 @app.get("/produtos/{id_produto}", status_code=200, response_model = schemas.Inventario, tags=["produto"])
 async def le_produto(Session = Depends(get_db), id_produto: int = Path(ge=0)):
@@ -48,7 +46,6 @@ async def le_produto(Session = Depends(get_db), id_produto: int = Path(ge=0)):
     """
     produto = crud.get_produto(db = Session, id_produto = id_produto)
     return produto
-
 
 
 @app.get("/produtos/", status_code=200, response_model = list[schemas.Inventario], tags=["produto"])
@@ -60,7 +57,7 @@ async def le_produtos(Session = Depends(get_db)):
     return produtos
 
 
-@app.post("/produtos/", status_code=201, response_model=schemas.Inventario, tags=["produto"])
+@app.post("/produtos/", status_code=201, response_model = schemas.Inventario, tags=["produto"])
 async def cria_produto(Session = Depends(get_db) , produto: schemas.Produto = Body(
         examples = {
             "chocolate": {
@@ -84,8 +81,8 @@ async def apaga_produto(Session = Depends(get_db), id_produto: int = Path(ge=0))
     return crud.apaga_produto(db = Session, id_produto = id_produto)
  
 
-@app.put("/produtos/{id_produto}", tags=["produto"])
-async def subscreve_produto(Session = Depends(get_db), id_produto: int = Path(ge=0), produto: schemas.Produto = Body(
+@app.put("/produtos/{id_produto}", status_code=200, response_model=schemas.Inventario, tags=["produto"])
+async def subscreve_produto(Session = Depends(get_db), id_prod: int = Path(ge=0), prod: schemas.Produto = Body(
         examples = {
             "Chocolate": {
                 "id_produto": 3,
@@ -97,21 +94,20 @@ async def subscreve_produto(Session = Depends(get_db), id_produto: int = Path(ge
     """
     Atualize o preco
     """
-    db_produto = crud.atualiza_preco(db = Session, produto = produto, id_produto = id_produto)
+    db_produto = crud.atualiza_preco(db = Session, produto = prod, id_produto = id_prod)
     return db_produto
 
-# Movimentação
+# ------------------------------------------------------------------------------------ Movimentação
 
-@app.get("/movimentacao/{id_movimentacao}", status_code=200, response_model = schemas.Movimentacao, tags=["movimentacao"])
-async def le_movimentacao(Session = Depends(get_db), id_movimentacao: int = Path(ge=0)):
+@app.get("/movimentacao/{id_mov}", status_code=200, response_model = schemas.Movimentacao, tags=["movimentacao"])
+async def le_movimentacao(Session = Depends(get_db), id_mov: int = Path(ge=0)):
     """
     Procura a movimentação baseado em seu id
     """
-    movimentacao = crud.get_movimentacao(db = Session, id_movimentacao = id_movimentacao)
-    return movimentacao
+    return crud.get_movimentacao(db = Session, id_movimentacao = id_mov)
 
 @app.get("/movimentacao/", status_code=200, response_model = list[schemas.Movimentacao], tags=["movimentacao"])
-async def le_movimentacao(Session = Depends(get_db)):
+async def le_movimentacoes(Session = Depends(get_db)):
     """
     Lista as movimentacoes
     """
@@ -119,32 +115,30 @@ async def le_movimentacao(Session = Depends(get_db)):
     return movimentacoes
 
 @app.post("/movimentacao/{id_produto}", status_code=201, response_model= schemas.Movimentacao, tags=["movimentacao"])
-async def cria_movimentacao(db : Session = Depends(get_db) , movimentacao: schemas.Cria_Movimentacao = Body(
+async def cria_movimentacao(db : Session = Depends(get_db) , movim: schemas.Cria_Movimentacao = Body(
         examples = {
             "Mov 1": {
                     "id_movimentacao" : 1,
                     "id_produto": 2,
                     "quantidade": 20,
-            },
+            }
         })):
     """
     Crie uma movimentação
     """
-    mov = crud.cria_movimentacao(db = Session, movimentacao = movimentacao)
-    return mov
+    return crud.cria_movimentacao(db = Session, movimentacao = movim)
 
  
-@app.delete("/movimentacao/{id_movimentacao}", status_code=200, response_model= schemas.Movimentacao, tags=["movimentacao"])
-async def apaga_movimentacao(Session = Depends(get_db), id_movimentacao: int = Path(ge=0)):
+@app.delete("/movimentacao/{id_mov}", status_code=200, response_model= schemas.Movimentacao, tags=["movimentacao"])
+async def apaga_movimentacao(Session = Depends(get_db), id_mov: int = Path(ge=0)):
     """
     Apaga uma movimentacao
     """
-    mov = crud.apaga_movimentacao(db = Session, id_movimentacao = id_movimentacao)
-    return mov
+    return crud.apaga_movimentacao(db = Session, id_movimentacao = id_mov)
  
 
-@app.put("/movimentacao/{id_movimentacao}", status_code = 200, response_model= schemas.Movimentacao, tags=["movimentacao"])
-async def subscreve_movimentacao(Session = Depends(get_db), id_movimentacao: int = Path(ge=0),  movimentacao: schemas.Cria_Movimentacao = Body(
+@app.put("/movimentacao/{id_mov}", status_code = 200, response_model= schemas.Movimentacao, tags=["movimentacao"])
+async def subscreve_movimentacao(Session = Depends(get_db), id_mov: int = Path(ge=0),  mov: schemas.Cria_Movimentacao = Body(
         examples = {
             "Mov 1": {
                     "id_movimentacao" : 1,
@@ -156,5 +150,4 @@ async def subscreve_movimentacao(Session = Depends(get_db), id_movimentacao: int
     """
     Atualize as informações de uma movimentação com id, quantidade
     """
-    mov = crud.atualiza_movimentacao(db = Session, id_movimentacao= id_movimentacao, movimentacao = movimentacao)
-    return mov
+    return crud.atualiza_movimentacao(db = Session, id_movimentacao= id_mov, movimentacao = mov)

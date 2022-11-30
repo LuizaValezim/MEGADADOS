@@ -58,14 +58,14 @@ def cria_movimentacao(db: Session, movimentacao: schemas.Cria_Movimentacao):
     db.refresh(db_movimentacao)
     return db_movimentacao
 
-def get_movimentacao(db: Session, id_movimentacao: int):
-    return db.query(models.Movimentacao).filter(models.Movimentacao.id_movimentacao == id_movimentacao).first()
+def get_movimentacao(db: Session, id_mov: int):
+    return db.query(models.Movimentacao).filter(models.Movimentacao.id_movimentacao == id_mov).first()
 
 def get_movimentacoes(db: Session):
     return db.query(models.Movimentacao).all()
 
-def apaga_movimentacao(db: Session, id_movimentacao: int):
-    db_movimentacao = db.query(models.Movimentacao).filter(models.Movimentacao.id_movimentacao == id_movimentacao).first()
+def apaga_movimentacao(db: Session, id_mov: int):
+    db_movimentacao = db.query(models.Movimentacao).filter(models.Movimentacao.id_movimentacao == id_mov).first()
     db_produto = db.query(models.Inventario).filter(models.Inventario.id_produto == db_movimentacao.id_produto).first()
     try:
         db_produto.quantidade -= db_movimentacao.quantidade
@@ -75,9 +75,9 @@ def apaga_movimentacao(db: Session, id_movimentacao: int):
         db.rollback()
     return db_movimentacao
 
-def atualiza_movimentacao(db: Session, id_movimentacao: int,  movimentacao: schemas.Cria_Movimentacao):
-    db_movimentacao = models.Movimentacao(**movimentacao.dict())
-    db_movimentacao_anterior = db.query(models.Movimentacao).filter(models.Movimentacao.id_movimentacao == id_movimentacao).first()
+def atualiza_movimentacao(db: Session, id_mov: int,  mov: schemas.Cria_Movimentacao):
+    db_movimentacao = models.Movimentacao(**mov.dict())
+    db_movimentacao_anterior = db.query(models.Movimentacao).filter(models.Movimentacao.id_movimentacao == id_mov).first()
     db_produto = db.query(models.Inventario).filter(models.Inventario.id_produto == db_movimentacao.id_produto).first()
     db_produto_anterior = db.query(models.Inventario).filter(models.Inventario.id_produto == db_movimentacao_anterior.id_produto).first()
     try:
@@ -88,7 +88,7 @@ def atualiza_movimentacao(db: Session, id_movimentacao: int,  movimentacao: sche
             db_produto_anterior.quantidade -= db_movimentacao_anterior.quantidade
             db_produto_anterior.quantidade += db_movimentacao.quantidade
             
-        db_movimentacao_anterior.id_produto = id_movimentacao
+        db_movimentacao_anterior.id_produto = id_mov
         db_movimentacao_anterior.id_produto = db_movimentacao.id_produto
         db_movimentacao_anterior.quantidade = db_movimentacao.quantidade
         db.commit()
