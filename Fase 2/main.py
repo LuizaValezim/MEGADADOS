@@ -82,19 +82,20 @@ async def apaga_produto(Session = Depends(get_db), id_produto: int = Path(ge=0))
  
 
 @app.put("/produtos/{id_produto}", status_code=200, response_model=schemas.Inventario, tags=["produto"])
-async def subscreve_produto(Session = Depends(get_db), id_prod: int = Path(ge=0), prod: schemas.Produto = Body(
+async def subscreve_produto(Session = Depends(get_db), id_produto: int = Path(ge=0), prod: schemas.Produto = Body(
         examples = {
             "Chocolate": {
                 "id_produto": 3,
                 "nome" : "Chocolate",
-                "preco": 7.5
+                "preco": 7.5,
+                "quantidade": 2
             },
         })):
 
     """
     Atualize o preco
     """
-    db_produto = crud.atualiza_preco(db = Session, produto = prod, id_produto = id_prod)
+    db_produto = crud.atualiza_preco(db = Session, produto = prod, id_produto = id_produto)
     return db_produto
 
 # ------------------------------------------------------------------------------------ Movimentação
@@ -104,7 +105,7 @@ async def le_movimentacao(Session = Depends(get_db), id_mov: int = Path(ge=0)):
     """
     Procura a movimentação baseado em seu id
     """
-    return crud.get_movimentacao(db = Session, id_movimentacao = id_mov)
+    return crud.get_movimentacao(db = Session, id_mov = id_mov)
 
 @app.get("/movimentacao/", status_code=200, response_model = list[schemas.Movimentacao], tags=["movimentacao"])
 async def le_movimentacoes(Session = Depends(get_db)):
@@ -115,18 +116,22 @@ async def le_movimentacoes(Session = Depends(get_db)):
     return movimentacoes
 
 @app.post("/movimentacao/{id_produto}", status_code=201, response_model= schemas.Movimentacao, tags=["movimentacao"])
-async def cria_movimentacao(db : Session = Depends(get_db) , movim: schemas.Cria_Movimentacao = Body(
+async def cria_movimentacao(Session = Depends(get_db),
+movim: schemas.Cria_Movimentacao = Body(
         examples = {
-            "Mov 1": {
+            "exemplo": {
+                "value": {
                     "id_movimentacao" : 1,
                     "id_produto": 2,
                     "quantidade": 20,
+                }
             }
         })):
     """
     Crie uma movimentação
     """
-    return crud.cria_movimentacao(db = Session, movimentacao = movim)
+    mov = crud.cria_movimentacao(db = Session, movimentacao = movim)
+    return mov
 
  
 @app.delete("/movimentacao/{id_mov}", status_code=200, response_model= schemas.Movimentacao, tags=["movimentacao"])
@@ -134,7 +139,7 @@ async def apaga_movimentacao(Session = Depends(get_db), id_mov: int = Path(ge=0)
     """
     Apaga uma movimentacao
     """
-    return crud.apaga_movimentacao(db = Session, id_movimentacao = id_mov)
+    return crud.apaga_movimentacao(db = Session, id_mov = id_mov)
  
 
 @app.put("/movimentacao/{id_mov}", status_code = 200, response_model= schemas.Movimentacao, tags=["movimentacao"])
@@ -143,11 +148,11 @@ async def subscreve_movimentacao(Session = Depends(get_db), id_mov: int = Path(g
             "Mov 1": {
                     "id_movimentacao" : 1,
                     "id_produto": 2,
-                    "quantidade": 20,
+                    "quantidade": 4,
             },
         })):
 
     """
     Atualize as informações de uma movimentação com id, quantidade
     """
-    return crud.atualiza_movimentacao(db = Session, id_movimentacao= id_mov, movimentacao = mov)
+    return crud.atualiza_movimentacao(db = Session, id_mov= id_mov, mov = mov)
