@@ -5,7 +5,7 @@ from pydantic import Field
 class Produto(BaseModel):
     id_produto: int 
     nome: str
-    preco: 7.5
+    preco: float
 
 class Cria_Inventario(Produto):
     pass
