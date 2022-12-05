@@ -1,0 +1,162 @@
+a)
+SELECT
+    nome, COUNT(id_roupa) AS numero_pecas
+FROM 
+    Figurino
+    INNER JOIN Personagem USING (id_personagem)
+GROUP BY
+    id_personagem
+ORDER BY
+    numero_pecas DESC
+LIMIT
+    1
+
+
+b)
+INSERT INTO Cena (id_cena, minuto_inicio, minuto_final) VALUES
+    (1, 1, 5),
+    (2, 5, 12);
+
+
+INSERT INTO Roupa(id_roupa, descricao) VALUES
+    (1, "camisa laranja e calça preta jeans"),
+    (2, "vestido azul escuro"),
+    (3, "macacão listrado"),
+    (4, "camiseta e shorts jeans vermelho"),
+    (5, "vestido longo preto");
+    
+INSERT INTO Personagem (id_personagem, nome) VALUES
+    (1, "Max"),
+    (2, "Lando");
+    
+INSERT INTO Figurino (id_roupa, id_cena, id_personagem, descricao) VALUES
+    (1, 1, 1, "Holanda, laranja mecanica"),
+    (2, 1, 1, "Azul, um grande lago"),
+    (3, 1, 1, "Listrado, como uma lagarta"),
+    
+    (1, 2, 1, "Continuacao da Holanda"),
+    (2, 2, 1, "Azul, mas agora triste"),
+    (3, 2, 1, "Listrado, mas virou borboleta"),
+    (4, 2, 1, "Vermelho, como vinho"),
+    
+    (5, 1, 2, "Preto, noite, escuro"),
+    
+    (1, 2, 2, "Laranja, mas agora alegre "),
+    (2, 2, 2, "Azul escuro misturado, agora sereno");
+
+
+c)
+SELECT
+    SUM(minuto_final - minuto_inicio) as minutos_total
+FROM 
+    Cena
+    INNER JOIN Figurino USING (id_cena)
+    INNER JOIN Roupa USING (id_roupa)
+WHERE
+    Roupa.descricao LIKE "%jeans%"
+
+
+d)
+SELECT
+    id_personagem INTO @id_Bob
+FROM 
+    Personagem
+WHERE
+    nome = 'Bob'
+
+
+
+DROP TEMPORARY TABLE IF EXISTS roupas_Bob
+
+
+CREATE TEMPORARY TABLE roupas_Bob
+    SELECT
+        DISTINCT (id_roupa), Roupa.descricao, id_personagem
+    FROM
+        Roupa
+        INNER JOIN Figurino USING (id_roupa)
+    WHERE
+        id_personagem = @id_Bob
+
+
+SELECT
+    id_roupa, Roupa.descricao
+FROM
+    Roupa
+    LEFT OUTER JOIN roupas_Bob USING (id_roupa)
+
+
+e)
+
+DROP TEMPORARY TABLE IF EXISTS assinatura_digital_roupa
+
+CREATE TEMPORARY TABLE assinatura_digital_roupa
+    SELECT
+        id_roupa, UNHEX(MD5(id_roupa)) as assinatura_digital
+    FROM
+        Roupa
+
+
+f) 
+
+DROP TEMPORARY TABLE IF EXISTS assinatura_figurino
+
+
+CREATE TEMPORARY TABLE assinatura_figurino
+    SELECT 
+        id_cena, id_personagem, BIT_XOR(assinatura_digital) as assinatura_fig
+    FROM
+        assinatura_digital_roupa
+        INNER JOIN Figurino USING (id_roupa)
+    GROUP BY
+        id_cena, id_personagem
+
+
+g)
+
+SELECT
+    id_personagem, (COUNT(assinatura_fig) - COUNT(DISTINCT(assinatura_fig))) as fig_iguais 
+FROM
+    assinatura_figurino
+GROUP BY
+    id_personagem
+HAVING
+    fig_iguais != 0
+
+
+h)
+
+Isso não funcionaria. Isso porque a tabela de figurino possui uma roupa, uma cena e um personagem.
+ Se tentássemos contar quantos ou quais personagem aparecem por cena, provavelmente acabaríamos 
+contando um mesmo personagem duas ou mais vezes, isso porque ele estará relacionado a diferentes 
+roupas numa mesma cena que constituem um figurino. Assim, por exemplo, se Bob veste uma calça, uma 
+camisa, um tênis e um chapéu na cena 1, acabariam sendo contabilizados 4 personagens (apareceriam 4 
+personagens), quando na verdade temos apenas 1 - que apenas está relacionado a diferentes roupas que
+ são parte de um figurino. 
+
+
+k)
+DROP TABLE IF EXISTS Filmes
+
+CREATE TABLE Filmes(
+    id_filme INT NOT NULL,
+    titulo VARCHAR(80) NOT NULL,
+    PRIMARY KEY (id_filme)
+);
+
+CREATE TABLE Filme_Cenas(
+    id_filme INT NOT NULL,
+    id_cena INT NOT NULL,
+    PRIMARY KEY(id_filme, id_cena)
+);
+
+ALTER TABLE Filme_Cenas
+    ADD CONSTRAINT fk_cena
+        FOREIGN KEY (id_cena)
+            REFERENCES Cena(id_cena);
+
+
+ALTER TABLE Filme_Cenas
+    ADD CONSTRAINT fk_filme
+        FOREIGN KEY (id_filme)
+            REFERENCES Filmes(id_filme);
